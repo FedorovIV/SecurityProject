@@ -21,11 +21,13 @@ class WireGuardDetector:
         self.logger = logging.getLogger(__name__)
 
     def analyze_packet(self, packet):
+        
         """Анализ отдельного пакета"""
         if UDP in packet:
             src = packet[UDP].sport
             dst = packet[UDP].dport
-            
+            # print(packet[UDP].payload)
+
             # Проверяем стандартный порт
             if src == 51820 or dst == 51820:
                 self.logger.info(f"Detected WireGuard default port usage: {src} -> {dst}")
