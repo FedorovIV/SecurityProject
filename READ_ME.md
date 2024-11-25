@@ -40,3 +40,8 @@ sudo iptables -A FORWARD -i eth0 -o eth1 -m state --state RELATED,ESTABLISHED -j
 sudo apt install iptables-persistent
 sudo netfilter-persistent save
 ```
+## Узнать ip адрес (Linux)
+
+```
+curl ifconfig.me
+```
