@@ -1,9 +1,15 @@
-from scapy.all import sniff, IP, TCP, UDP, Raw, ICMP
+from scapy.all import sniff, IP, TCP, UDP, Raw, ICMP, ESP
+
 from collections import defaultdict, Counter
+
 import time
+
 import logging
+
 import statistics
+
 from queue import Queue
+
 
 class VPNDetector:
     def __init__(self):
@@ -192,12 +198,15 @@ class VPNDetector:
                 conn_data['detected_vpn_types'].add('IPsec')
             
             # Проверяем NAT-Traversal через UDP
-            elif UDP in packet:
+            elif UDP in packet and Raw in packet:
+                udp_payload = packet[Raw].load
                 src_port = packet[UDP].sport
                 dst_port = packet[UDP].dport
                 if src_port in self.vpn_ports['IPsec'] or dst_port in self.vpn_ports['IPsec']:
                     if len(packet) in self.packet_sizes['IPsec']:
                         conn_data['confidence_scores']['IPsec'] += 0.3
+                        if udp_payload.startswith(b'4000') or udp_payload.startswith(b'4200'):
+                            conn_data['confidence_scores']['IPsec'] += 0.2
 
     def update_detection_confidence(self, conn_data):
         """Обновление уверенности в обнаружении"""
