@@ -100,7 +100,7 @@ class VPNClient:
                 self.reconnect_interval *= 1.5  # увеличиваем интервал
                 
         return False
-        
+            
     def handle_traffic(self):
         while self.running:
             try:
