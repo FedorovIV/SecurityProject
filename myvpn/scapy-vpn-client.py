@@ -2,9 +2,9 @@ from scapy.all import *
 import socket
 
 # Настройки туннеля
-REMOTE_IP = "192.168.1.2"  # IP сервера
+REMOTE_IP = "88.119.170.154"  # IP сервера
 REMOTE_PORT = 5555         # Порт сервера
-LOCAL_INTERFACE = "eth0"   # Интерфейс источника (например, eth0)
+LOCAL_INTERFACE = "Беспроводная сеть"   # Интерфейс источника (например, eth0)
 
 # Настраиваем сокет для отправки UDP
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

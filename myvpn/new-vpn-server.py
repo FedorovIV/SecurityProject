@@ -10,7 +10,7 @@ def inject_packet(packet_data):
     sendp(packet, iface="eth0")  # Отправляем пакет в сеть (замените "eth0" на вашу сеть)
 
 def start_server():
-    server_address = ("0.0.0.0", 12345)  # Слушаем на всех IP
+    server_address = ("0.0.0.0", 5554)  # Слушаем на всех IP
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
         server.bind(server_address)
         server.listen(5)
