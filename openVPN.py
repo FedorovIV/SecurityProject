@@ -27,6 +27,13 @@ class OpenVPNDetector:
         # OpenVPN может работать как по UDP, так и по TCP
         if IP in packet:
             print(packet[IP].src, packet[IP].dst)
+        if TCP in packet:
+            payload = bytes(packet[TCP].payload)
+            if payload:
+                # Выводим первые 100 байт payload
+                print("Payload (first 100 bytes):", payload[:100])
+            else:
+                print("No payload in TCP packet")
             
         # if UDP in packet or TCP in packet:
         #     if UDP in packet:
