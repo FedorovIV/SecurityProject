@@ -32,8 +32,8 @@ http {
         server_name 88.119.170.154; # Укажите ваш IP или домен
 
         # Пути к SSL-сертификату и приватному ключу
-        ssl_certificate /etc/ssl/certs/server.crt;
-        ssl_certificate_key /etc/ssl/private/server.key;
+        ssl_certificate /etc/ssl/certs/ca-server.crt;
+        ssl_certificate_key /etc/ssl/private/ca-server.key;
 
         ssl_verify_client on;
         ssl_client_certificate /etc/ssl/certs/client.crt;
@@ -188,6 +188,7 @@ sudo ./vpn-ws-client --exec "ip addr add 192.168.1.100/24 dev user1; ip link set
 sudo ./vpn-ws-client --exec "ip -6 addr add 2001:db8::1/64 dev user1; ip link set dev user1 up" user1 --bridge ws://88.119.170.154/vpn
 
 # wss
+sudo ./vpn-ws-client --key ./certs/client.key --crt ./certs/client.crt --no-verify --exec "ip -6 addr add 2001:db8::1/64 dev user1; ip link set dev user1 up" user1 --bridge wss://88.119.170.154:443/vpn
 ```
 
 ### Настройка перессылки 
@@ -196,21 +197,12 @@ TODO
 ### Создание сертификатов
 ```
 # Создаем приватный ключ CA
-openssl genrsa -out ca.key 4096
+openssl genrsa -out ca-server.key 4096
 
 # Создаем самоподписанный сертификат CA
-openssl req -new -x509 -days 365 -key ca.key -out ca.crt \
+openssl req -new -x509 -days 365 -key ca-server.key -out ca-server.crt \
     -subj "/C=US/ST=State/L=City/O=Organization/OU=CA/CN=example-CA"
 
-# Генерируем приватный ключ для сервера
-openssl genrsa -out server.key 4096
-
-# Создаем CSR для сервера
-openssl req -new -key server.key -out server.csr \
-    -subj "/C=US/ST=State/L=City/O=Organization/OU=Server/CN=88.119.170.154"
-
-# Подписываем серверный сертификат с использованием CA
-openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365
 
 # Генерируем приватный ключ для клиента
 openssl genrsa -out client.key 4096
@@ -220,6 +212,10 @@ openssl req -new -key client.key -out client.csr \
     -subj "/C=US/ST=State/L=City/O=Organization/OU=Client/CN=Client"
 
 # Подписываем клиентский сертификат
-openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 365
+openssl x509 -req -in client.csr -CA ca-server.crt -CAkey ca-server.key -CAcreateserial -out client.crt -days 365
+
+#На клиенте 
+sudo cp server.crt /usr/local/share/ca-certificates/
+sudo update-ca-certificates
 
 ```
