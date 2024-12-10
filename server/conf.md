@@ -52,8 +52,11 @@ server {
 sudo ln -s /etc/nginx/sites-available/static-example /etc/nginx/sites-enabled/
 sudo rm /etc/nginx/sites-enabled/default
 sudo nginx
+sudo nginx -s reload
+
 ```
 
 ```
 curl -v http://[2001:db8::2]
+
 ```
