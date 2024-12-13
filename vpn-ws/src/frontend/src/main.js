@@ -100,7 +100,20 @@ async function setCAcert(filepath) {
   }
 }
 
-
+function execCommand(command) {
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      if (stderr) {
+        console.warn(stderr);
+      }
+      resolve(stdout);
+    });
+  });
+}
 
 async function handleTryConnect(event, connectJSON) {
   const webContents = event.sender;
