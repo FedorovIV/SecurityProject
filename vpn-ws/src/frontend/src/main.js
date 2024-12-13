@@ -157,8 +157,8 @@ async function handleTryConnect(event, connectJSON) {
 
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 400,
-    height: 650,
+    width: 250,
+    height: 500,
     resizable: false,
     webPreferences: {
       preload: path.join(__dirname, "./preload.js"),
