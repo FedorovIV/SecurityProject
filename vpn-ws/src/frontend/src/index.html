@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <link href="./main.css" rel="stylesheet" />
+    <title>FKN VPN</title>
+  </head>
+  <body>
+    <div class="general-wrapper">
+      <div class="logo-wrapper">
+        <img
+          class="logo-wrapper__logo"
+          src="./public/images/websocket-svgrepo-com.svg"
+        />
+        <span class="logo-wrapper__text">FKN VPN</span>
+      </div>
+      <div class="connect-wrapper">
+        <form class="connect-wrapper__form">
+          <label class="connect-wrapper__label">
+            <span class="connect-wrapper__label-text">IP адрес:</span>
+            <input
+              id="ip"
+              placeholder="88.119.170.154"
+              value="88.119.170.154"
+              class="connect-wrapper__input"
+            />
+          </label>
+          <label class="connect-wrapper__label">
+            <span class="connect-wrapper__label-text">Имя пользователя:</span>
+            <input
+              id="username"
+              placeholder="root"
+              value="root"
+              class="connect-wrapper__input"
+            />
+          </label>
+          <label class="connect-wrapper__label">
+            <span class="connect-wrapper__label-text">Пароль:</span>
+            <input id="password" class="connect-wrapper__input" value="vfO579LVCw3yc01ElI" />
+          </label>
+          <button class="submit-button">
+            <div class="submit-button__animation-wrapper">
+              <div class="submit-button__one-circle"></div>
+              <div class="submit-button__second-circle"></div>
+            </div>
+            <span class="submit-button__text">Подключиться </span>
+          </button>
+        </form>
+      </div>
+      <footer class="footer">Prod by B01-107</footer>
+    </div>
+    <script src="./rendered.js"></script>
+  </body>
+</html>

@@ -1,0 +1,123 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+}
+
+.general-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(rgb(81, 0, 148), rgb(98, 0, 255));
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  width: 100%;
+}
+
+.logo-wrapper__logo {
+  height: 80px;
+}
+
+.logo-wrapper__text {
+  font-size: 60px;
+  font-weight: bold;
+  box-shadow: 0 0 2px 2px;
+}
+
+.connect-wrapper {
+  padding: 10px;
+}
+.connect-wrapper__form {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.connect-wrapper__input {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 25px;
+  border: none;
+}
+
+.connect-wrapper__label {
+  display: flex;
+  flex-direction: column;
+}
+
+.submit-button {
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  aspect-ratio: 1/1;
+  width: 220px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 25px;
+  color: white;
+  background-color: rgb(36, 0, 70);
+  box-shadow: 0 0 3px 3px white;
+  transition: 0.3s all;
+}
+
+.submit-button:active {
+  transform: scale(1.05);
+}
+
+.submit-button._connected{
+  box-shadow: 0 0 3px 3px gold;
+}
+
+.submit-button .submit-button__animation-wrapper {
+  display: none;
+}
+
+.submit-button._try-connect .submit-button__animation-wrapper {
+  display: flex;
+}
+
+@keyframes try-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.submit-button__animation-wrapper {
+  position: absolute;
+  width: calc(100% + 16px);
+  justify-content: space-between;
+  animation: try-animation 3s infinite linear;
+}
+
+.submit-button__one-circle,
+.submit-button__second-circle {
+  width: 10px;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 2px 2px white;
+  border-radius: 50%;
+}
+
+
+.footer{
+  padding: 5px 10px;
+  border-top: solid 2px white;
+}
