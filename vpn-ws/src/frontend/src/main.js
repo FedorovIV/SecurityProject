@@ -200,9 +200,6 @@ async function runVpnWS(ipv6) {
       resolve()
     }, 2000);
 
-    setTimeout(()=>{
-      console.log(vpnProcess.stdout._read(10))
-    }, 3000)
     // Если процесс завершается с ошибкой
     vpnProcess.on("error", (err) => {
       console.error("VPN Process Error:", err);
