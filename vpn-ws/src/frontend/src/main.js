@@ -195,7 +195,10 @@ async function runVpnWS(ipv6) {
     ];
 
     // Запускаем процесс через spawn
-    vpnProcess = spawn(command, args);
+    const vpnProcess = spawn(command, args, {
+      stdio: "inherit",
+    });
+
     subprocesses.push(vpnProcess);
     // Обработчик данных из stdout
     vpnProcess.stdout.on("data", (data) => {
