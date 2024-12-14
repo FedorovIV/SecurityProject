@@ -201,11 +201,6 @@ async function runVpnWS(ipv6) {
 
     subprocesses.push(vpnProcess);
 
-    // Обработчик ошибок процесса
-    vpnProcess.stderr.on("data", (err) => {
-      console.error("VPN Error:", err.toString());
-    });
-
     // Если процесс завершается с ошибкой
     vpnProcess.on("error", (err) => {
       console.error("VPN Process Error:", err);
