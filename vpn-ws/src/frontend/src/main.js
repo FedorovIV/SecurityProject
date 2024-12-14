@@ -194,10 +194,12 @@ async function runVpnWS(ipv6) {
       "wss://88.119.170.154:443/vpn",
     ];
 
-    const vpnProcess = spawn(command, args, { stdio: "pipe" });
-
-    vpnProcess.stdout.setEncoding("utf8");
+    const vpnProcess = spawn(command, args, { stdio: "inherit" });
   
+    setTimeout(()=>{
+      resolve()
+    }, 2000);
+
     vpnProcess.stdout.on("data", (data) => {
       process.stdout.write(data); // Продолжаем выводить в консоль
       if (data.includes("connection")) {
