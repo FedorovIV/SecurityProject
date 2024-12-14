@@ -194,7 +194,7 @@ async function runVpnWS(ipv6) {
       "wss://88.119.170.154:443/vpn",
     ];
 
-    const vpnProcess = spawn(command, args, { stdio: ["inherit", "pipe", "pipe"] });
+    const vpnProcess = spawn(command, args, { stdio: "pipe" });
 
     vpnProcess.stdout.setEncoding("utf8");
   
