@@ -194,25 +194,25 @@ async function runVpnWS(ipv6) {
       "wss://88.119.170.154:443/vpn",
     ];
 
-    // Запускаем процесс через spawn
-    const vpnProcess = spawn(command, args, { stdio: "pipe" });
+    const vpnProcess = spawn(command, args, { stdio: ["inherit", "pipe", "pipe"] });
 
-    subprocesses.push(vpnProcess);
-
+    vpnProcess.stdout.setEncoding("utf8");
+  
     vpnProcess.stdout.on("data", (data) => {
-      console.log(data);
-      const output = data.toString().trim();
-      console.log("VPN Output:", output);
-
-      if (output.includes("connected")) {
-        resolve("Successfully connected through VPN");
+      process.stdout.write(data); // Продолжаем выводить в консоль
+      if (data.includes("connection")) {
+        console.log("Found the word 'connection'");
       }
     });
+
 
     vpnProcess.stderr.on("data", (data) => {
       console.error("VPN Error Output:", data.toString().trim());
     });
 
+    setTimeout(()=>{
+      console.log(vpnProcess.stdout.pipe())
+    }, 3000)
     // Если процесс завершается с ошибкой
     vpnProcess.on("error", (err) => {
       console.error("VPN Process Error:", err);
