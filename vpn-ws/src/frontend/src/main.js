@@ -6,6 +6,7 @@ const fs = require("fs");
 const fsPromised = require("fs/promises");
 
 let vpnProcess = null;
+let subprocesses = [];
 
 async function handleTryConnect(event, connectJSON) {
   const webContents = event.sender;
@@ -195,7 +196,7 @@ async function runVpnWS(ipv6) {
 
     // Запускаем процесс через spawn
     vpnProcess = spawn(command, args);
-
+    subprocesses.push(vpnProcess);
     // Обработчик данных из stdout
     vpnProcess.stdout.on("data", (data) => {
       const output = data.toString();
