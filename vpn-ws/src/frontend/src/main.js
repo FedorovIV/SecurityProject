@@ -209,6 +209,10 @@ async function runVpnWS(ipv6) {
       }
     });
 
+    vpnProcess.stderr.on("data", (data) => {
+      console.error("VPN Error Output:", data.toString().trim());
+    });
+    
     // Если процесс завершается с ошибкой
     vpnProcess.on("error", (err) => {
       console.error("VPN Process Error:", err);
