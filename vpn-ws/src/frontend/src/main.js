@@ -200,6 +200,7 @@ async function runVpnWS(ipv6) {
     subprocesses.push(vpnProcess);
 
     vpnProcess.stdout.on("data", (data) => {
+      console.log(data);
       const output = data.toString().trim();
       console.log("VPN Output:", output);
 
