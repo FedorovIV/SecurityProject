@@ -233,6 +233,9 @@ async function runVpnWS(ipv6) {
 }
 
 async function handleDisconnect() {
+  try {
+    await execCommand("sudo ip link delete vpn-ws");
+  } catch {}
   await stopVpnWS();
 }
 
