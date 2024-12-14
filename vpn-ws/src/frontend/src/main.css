@@ -27,11 +27,11 @@ html {
 }
 
 .logo-wrapper__logo {
-  height: 50px;
+  height: 30px;
 }
 
 .logo-wrapper__text {
-  font-size: 40px;
+  font-size: 20px;
   font-weight: bold;
   box-shadow: 0 0 2px 2px;
 }
@@ -46,18 +46,20 @@ html {
 }
 
 .connect-wrapper__input {
-  padding: 5px 10px;
+  padding: 3px 6px;
   border-radius: 5px;
-  font-size: 15px;
+  font-size: 12px;
   border: none;
 }
 
 .connect-wrapper__label {
   display: flex;
+  font-size: 12px;
   flex-direction: column;
 }
 
 .submit-button {
+  top:5px;
   cursor: pointer;
   position: relative;
   display: flex;

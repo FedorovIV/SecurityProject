@@ -8,4 +8,6 @@ contextBridge.exposeInMainWorld("versions", {
 
 contextBridge.exposeInMainWorld("electronAPI", {
   tryConnect: (connectJSON) => ipcRenderer.invoke("dialog:tryConnect", connectJSON),
+  disconnect: () => ipcRenderer.invoke("dialog:disconnect"),
+
 });

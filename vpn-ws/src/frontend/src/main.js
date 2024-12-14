@@ -5,6 +5,44 @@ const { Client } = require("ssh2");
 const fs = require("fs");
 const fsPromised = require("fs/promises");
 
+let vpnProcess = null;
+
+async function handleTryConnect(event, connectJSON) {
+  const webContents = event.sender;
+  const win = BrowserWindow.fromWebContents(webContents);
+
+  // Парсим JSON с данными подключения
+  let connectInfo = JSON.parse(connectJSON);
+  let { ip, username, password, ipv6 } = connectInfo;
+
+  try {
+    const localPath = await dowloadCerts(connectInfo);
+    console.log("File is available:", localPath);
+  } catch (error) {
+    console.error("Error caused:", error);
+    win.webContents.send("error", { message: error });
+  }
+
+  try {
+    await setCAcert("./certs/ca-server.crt");
+  } catch (error) {
+    console.error("Error caused:", error);
+    win.webContents.send("error", { message: error });
+  }
+
+  try {
+    // Ждём подключения VPN
+    const message = await runVpnWS(ipv6);
+    console.log(message);
+
+    // Сообщаем успешное подключение
+    win.webContents.send("vpn-success", { message });
+  } catch (error) {
+    console.error("Error caused:", error);
+    win.webContents.send("error", { message: error.message });
+  }
+}
+
 async function delay(ms) {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -12,7 +50,22 @@ async function delay(ms) {
 async function dowloadCerts({ ip, username, password }) {
   const conn = new Client();
 
-  await fsPromised.mkdir("./certs");
+  const certsPath = path.join(__dirname, "certs");
+
+  // Проверяем, существует ли папка
+  if (fs.existsSync(certsPath)) {
+    try {
+      // Удаляем папку рекурсивно
+      fs.rmSync(certsPath, { recursive: true, force: true });
+      console.log("Папка ./certs успешно удалена.");
+    } catch (error) {
+      console.error("Ошибка удаления папки ./certs:", error);
+    }
+  } else {
+    console.log("Папка ./certs не существует.");
+  }
+
+  await fsPromised.mkdir(certsPath);
 
   return new Promise((resolve, reject) => {
     conn.on("ready", () => {
@@ -119,46 +172,76 @@ function execCommand(command) {
   });
 }
 
-async function runVpnWS() {
-  execCommand(
-    'sudo ./vpn-ws-client --key ./certs/client.key --crt ./certs/client.crt --no-verify --exec "ip -6 addr add 2001:db8::1/64 dev user1; ip link set dev user1 up" user1 --bridge wss://88.119.170.154:443/vpn'
-  );
+async function runVpnWS(ipv6) {
+  return new Promise((resolve, reject) => {
+    const command = "sudo";
+    const args = [
+      "./vpn-ws-client",
+      "--key",
+      "./certs/client.key",
+      "--crt",
+      "./certs/client.crt",
+      "--no-verify",
+      "--exec",
+      `ip -6 addr add ${ipv6} dev vpn-ws; ip link set dev vpn-ws up`,
+      "vpn-ws",
+      "--bridge",
+      "wss://88.119.170.154:443/vpn",
+    ];
+
+    // Запускаем процесс через spawn
+    vpnProcess = spawn(command, args);
+
+    // Обработчик данных из stdout
+    vpnProcess.stdout.on("data", (data) => {
+      const output = data.toString();
+      console.log("VPN Output:", output);
+
+      // Если в выходных данных найдено "connected"
+      if (output.includes("connected")) {
+        resolve("Successfully connected through VPN");
+      }
+    });
+
+    // Обработчик ошибок процесса
+    vpnProcess.stderr.on("data", (err) => {
+      console.error("VPN Error:", err.toString());
+    });
+
+    // Если процесс завершается с ошибкой
+    vpnProcess.on("error", (err) => {
+      console.error("VPN Process Error:", err);
+      reject(err);
+    });
+
+    // Обработчик завершения процесса (для дополнительной обработки)
+    vpnProcess.on("close", (code) => {
+      if (code !== 0) {
+        console.error(`VPN process exited with code: ${code}`);
+        reject(new Error(`VPN process exited with code: ${code}`));
+      }
+    });
+  });
 }
-async function handleTryConnect(event, connectJSON) {
-  const webContents = event.sender;
-  const win = BrowserWindow.fromWebContents(webContents);
 
-  // Парсим JSON с данными подключения
-  let connectInfo = JSON.parse(connectJSON);
-  let { ip, username, password } = connectInfo;
+async function handleDisconnect() {
+  await stopVpnWS();
+}
 
-  try {
-    const localPath = await dowloadCerts(connectInfo);
-    console.log("File is available:", localPath);
-  } catch (error) {
-    console.error("Error caused:", error);
-    win.webContents.send("error", { message: error });
-  }
-
-  try {
-    await setCAcert("./certs/ca-server.crt");
-  } catch (error) {
-    console.error("Error caused:", error);
-    win.webContents.send("error", { message: error });
-  }
-
-  try {
-    runVpnWS();
-  } catch (error) {
-    console.error("Error caused:", error);
-    win.webContents.send("error", { message: error });
+async function stopVpnWS() {
+  if (vpnProcess) {
+    vpnProcess.kill("SIGKILL"); // Завершаем процесс
+    vpnProcess = null; // Очищаем переменную
+    console.log("VPN process has been terminated.");
+  } else {
+    console.log("VPN process is not running.");
   }
 }
 
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 250,
-    height: 500,
+    height: 450,
     resizable: false,
     webPreferences: {
       preload: path.join(__dirname, "./preload.js"),
@@ -172,6 +255,8 @@ const createWindow = () => {
 
 app.whenReady().then(() => {
   ipcMain.handle("dialog:tryConnect", handleTryConnect);
+  ipcMain.handle("dialog:disconnect", handleDisconnect);
+
   Menu.setApplicationMenu(null);
   createWindow();
 });

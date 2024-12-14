@@ -1,11 +1,13 @@
-from scapy.all import sniff, UDP, Raw
+from scapy.all import sniff, UDP, Raw, IP
 from scapy.all import conf
 
 from collections import defaultdict
 import time
 import logging
 from typing import Dict, List, Tuple
+from scapy.all import *
 
+conf.ifaces.show()
 class WireGuardDetector:
     def __init__(self):
         self.setup_logging()
@@ -21,7 +23,8 @@ class WireGuardDetector:
         self.logger = logging.getLogger(__name__)
 
     def analyze_packet(self, packet):
-        
+    
+            
         """Анализ отдельного пакета"""
         if UDP in packet:
             src = packet[UDP].sport
