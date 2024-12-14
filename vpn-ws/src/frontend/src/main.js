@@ -173,6 +173,10 @@ function execCommand(command) {
 }
 
 async function runVpnWS(ipv6) {
+  try {
+    await execCommand("sudo ip link delete vpn-ws");
+  } catch {}
+
   return new Promise((resolve, reject) => {
     const command = "sudo";
     const args = [
