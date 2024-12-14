@@ -195,11 +195,18 @@ async function runVpnWS(ipv6) {
     ];
 
     // Запускаем процесс через spawn
-    const vpnProcess = spawn(command, args, {
-      stdio: "inherit",
-    });
+    const vpnProcess = spawn(command, args);
 
     subprocesses.push(vpnProcess);
+
+    vpnProcess.stdout.on("data", (data) => {
+      const output = data.toString().trim();
+      console.log("VPN Output:", output);
+
+      if (output.includes("connected")) {
+        resolve("Successfully connected through VPN");
+      }
+    });
 
     // Если процесс завершается с ошибкой
     vpnProcess.on("error", (err) => {
