@@ -4,7 +4,9 @@ document
     event.preventDefault();
 
     if (
-      document.querySelector(".submit-button").classList.contains("_connected")
+      document
+        .querySelector(".submit-button")
+        .classList.contains("_try-connect")
     ) {
       return;
     }
