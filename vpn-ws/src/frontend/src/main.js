@@ -194,26 +194,14 @@ async function runVpnWS(ipv6) {
       "wss://88.119.170.154:443/vpn",
     ];
 
-    const vpnProcess = spawn(command, args, { stdio: "inherit" });
+    const vpnProcess = spawn(command, args, { stdio: ["inherit", 'pipe'] });
   
     setTimeout(()=>{
       resolve()
     }, 2000);
 
-    vpnProcess.stdout.on("data", (data) => {
-      process.stdout.write(data); // Продолжаем выводить в консоль
-      if (data.includes("connection")) {
-        console.log("Found the word 'connection'");
-      }
-    });
-
-
-    vpnProcess.stderr.on("data", (data) => {
-      console.error("VPN Error Output:", data.toString().trim());
-    });
-
     setTimeout(()=>{
-      console.log(vpnProcess.stdout.pipe())
+      console.log(vpnProcess.stdout._read(10))
     }, 3000)
     // Если процесс завершается с ошибкой
     vpnProcess.on("error", (err) => {
