@@ -264,3 +264,28 @@ app.whenReady().then(() => {
   Menu.setApplicationMenu(null);
   createWindow();
 });
+
+// Обработчик закрытия главного окна
+app.on("window-all-closed", () => {
+  console.log("Главное окно закрыто. Завершаем дочерние процессы...");
+  cleanupSubprocesses();
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});
+
+// Завершаем все дочерние процессы при выходе
+app.on("before-quit", () => {
+  console.log("Завершается приложение...");
+  cleanupSubprocesses();
+});
+
+// Функция для остановки всех дочерних процессов
+function cleanupSubprocesses() {
+  for (const child of subprocesses) {
+    if (!child.killed) {
+      console.log(`Завершается процесс PID ${child.pid}`);
+      child.kill(); // Завершаем процесс
+    }
+  }
+}
